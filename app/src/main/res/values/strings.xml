@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">Privatbank Atm Service</string>
+
+    <string name="title_main">Инфраструктура ПриватБанка. Банкоматы</string>
+    <string name="city_hint">Введите город</string>
+    <string name="search">Поиск</string>
+    <string name="place_atm">Место:</string>
+    <string name="address_atm">Адрес:</string>
+    <string name="work_time_atm">Время работы:</string>
+
+    <string-array name="cities">
+        <item>Винница</item>
+        <item>Днепр</item>
+        <item>Донецк</item>
+        <item>Житомир</item>
+        <item>Запорожье</item>
+        <item>Ивано-Франковск</item>
+        <item>Киев</item>
+        <item>Кропивницкий</item>
+        <item>Луганск</item>
+        <item>Львов</item>
+        <item>Луцк</item>
+        <item>Николаев</item>
+        <item>Одесса</item>
+        <item>Полтава</item>
+        <item>Ровно</item>
+        <item>Сумы</item>
+        <item>Тернополь</item>
+        <item>Ужгород</item>
+        <item>Шостка</item>
+        <item>Харьков</item>
+        <item>Херсон</item>
+        <item>Хмельницкий</item>
+        <item>Черкассы</item>
+        <item>Чернигов</item>
+        <item>Черновцы</item>
+    </string-array>
+</resources>
