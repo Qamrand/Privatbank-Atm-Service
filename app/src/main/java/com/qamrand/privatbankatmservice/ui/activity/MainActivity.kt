@@ -18,6 +18,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         fragmentManager = supportFragmentManager
         showMainFragment()
+
+
     }
 
     private fun showMainFragment() {
@@ -33,5 +35,4 @@ class MainActivity : AppCompatActivity() {
         transaction.commit()
     }
 
-    fun onClickSearchButton(view: View) {}
 }

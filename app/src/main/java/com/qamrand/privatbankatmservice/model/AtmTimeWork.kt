@@ -4,41 +4,40 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-class AtmTimeWork: Serializable {
-
+//todo change to parselable
+data class AtmTimeWork(
     @SerializedName("mon")
     @Expose
-    private  var mon: String? = null
+    var mon: String,
 
     @SerializedName("tue")
     @Expose
-    private var tue: String? = null
+    var tue: String,
 
     @SerializedName("wed")
     @Expose
-    private var wed: String? = null
+    var wed: String,
 
     @SerializedName("thu")
     @Expose
-    private  var thu: String? = null
+    var thu: String,
 
     @SerializedName("fri")
     @Expose
-    private var fri: String? = null
+    var fri: String,
 
     @SerializedName("sat")
     @Expose
-    private var sat: String? = null
+    var sat: String,
 
     @SerializedName("sun")
     @Expose
-    private var sun: String? = null
+    var sun: String,
 
     @SerializedName("hol")
     @Expose
-    private  var hol: String? = null
-
-    private val serialVersionUID = -5682477465344989791L
+    var hol: String
+) : Serializable {
 
     override fun toString(): String {
         val sb = StringBuilder()
@@ -51,109 +50,5 @@ class AtmTimeWork: Serializable {
         sb.append("Воскресенье:    ").append(sun).append("\n")
         sb.append("Праздники:        ").append(hol).append("\n")
         return sb.toString()
-    }
-
-    fun getMon(): String? {
-        return mon
-    }
-
-    fun setMon(mon: String?) {
-        this.mon = mon
-    }
-
-    fun withMon(mon: String?): AtmTimeWork? {
-        this.mon = mon
-        return this
-    }
-
-    fun getTue(): String? {
-        return tue
-    }
-
-    fun setTue(tue: String?) {
-        this.tue = tue
-    }
-
-    fun withTue(tue: String?): AtmTimeWork? {
-        this.tue = tue
-        return this
-    }
-
-    fun getWed(): String? {
-        return wed
-    }
-
-    fun setWed(wed: String?) {
-        this.wed = wed
-    }
-
-    fun withWed(wed: String?): AtmTimeWork? {
-        this.wed = wed
-        return this
-    }
-
-    fun getThu(): String? {
-        return thu
-    }
-
-    fun setThu(thu: String?) {
-        this.thu = thu
-    }
-
-    fun withThu(thu: String?): AtmTimeWork? {
-        this.thu = thu
-        return this
-    }
-
-    fun getFri(): String? {
-        return fri
-    }
-
-    fun setFri(fri: String?) {
-        this.fri = fri
-    }
-
-    fun withFri(fri: String?): AtmTimeWork? {
-        this.fri = fri
-        return this
-    }
-
-    fun getSat(): String? {
-        return sat
-    }
-
-    fun setSat(sat: String?) {
-        this.sat = sat
-    }
-
-    fun withSat(sat: String?): AtmTimeWork? {
-        this.sat = sat
-        return this
-    }
-
-    fun getSun(): String? {
-        return sun
-    }
-
-    fun setSun(sun: String?) {
-        this.sun = sun
-    }
-
-    fun withSun(sun: String?): AtmTimeWork? {
-        this.sun = sun
-        return this
-    }
-
-    fun getHol(): String? {
-        return hol
-    }
-
-    fun setHol(hol: String?) {
-        this.hol = hol
-    }
-
-    fun withHol(hol: String?): AtmTimeWork? {
-        this.hol = hol
-        return this
     }
 }

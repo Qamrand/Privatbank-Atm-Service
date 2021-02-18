@@ -1,10 +1,12 @@
 package com.qamrand.privatbankatmservice.ui.fragment.main
 
+import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.DecelerateInterpolator
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -21,6 +23,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
 class MainFragment : Fragment(), AtmAdapter.AtmViewListener, View.OnClickListener {
 
     @Inject
@@ -30,6 +33,13 @@ class MainFragment : Fragment(), AtmAdapter.AtmViewListener, View.OnClickListene
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        adapter = AtmAdapter(this)
+        Log.d(App.TAG_APP, "CREATE FRAGMENT")
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,6 +59,7 @@ class MainFragment : Fragment(), AtmAdapter.AtmViewListener, View.OnClickListene
 
         binding.acCity.setAdapter(arrayAdapter)
 
+
         setupRecyclerView()
 
         binding.searchButton.setOnClickListener(this)
@@ -58,10 +69,12 @@ class MainFragment : Fragment(), AtmAdapter.AtmViewListener, View.OnClickListene
 
     private fun fetchData(city: String) {
         GlobalScope.launch(Dispatchers.Main){
+            binding.progressBar.visibility = View.VISIBLE
             val atm = dataSource.getAtmByCity(city)
             if(atm.isSuccessful) {
                // Log.d(App.TAG_APP, "" + atm.body()?.getAtmDevices())
-                adapter.setItems(atm.body()?.getAtmDevices() as ArrayList<AtmDevice>)
+                binding.progressBar.visibility = View.GONE
+                adapter.setItems(atm.body()?.atmDevices as ArrayList<AtmDevice>)
             } else {
                 Log.d(App.TAG_APP, atm.errorBody().toString())
             }
@@ -77,7 +90,8 @@ class MainFragment : Fragment(), AtmAdapter.AtmViewListener, View.OnClickListene
     }
 
     private fun setupRecyclerView() {
-        adapter = AtmAdapter(this)
+
+        Log.d(App.TAG_APP, "SETUP")
         val linearLayoutManager = LinearLayoutManager(requireContext())
         val itemDecor = DividerItemDecoration(
             binding.recyclerView.context,
@@ -92,14 +106,13 @@ class MainFragment : Fragment(), AtmAdapter.AtmViewListener, View.OnClickListene
         }
     }
 
-
-
-
     override fun onClick(v: View) {
+
         if(v.id == R.id.search_button) {
             Log.d(App.TAG_APP, "clicked")
             val city: String = binding.acCity.text.toString()
             if (city != "") {
+                adapter.setItems(ArrayList())
                 fetchData(city)
             }
         }
@@ -107,6 +120,14 @@ class MainFragment : Fragment(), AtmAdapter.AtmViewListener, View.OnClickListene
 
     override fun onDestroyView() {
         super.onDestroyView()
+        Log.d(App.TAG_APP, "DESTROY VIEW")
+
         _binding = null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(App.TAG_APP, "DESTROY FRAGMENT")
+
     }
 }

@@ -24,10 +24,10 @@ class AtmFragment : Fragment() {
         val atmDevice = arguments?.getSerializable("Atm data") as AtmDevice
 
         binding.apply {
-            textViewCity.text = atmDevice.getCityRU()
-            textViewPlace.text = atmDevice.getPlaceRu()
-            textViewAddress.text = atmDevice.getFullAddressRu()
-            textViewWorkTime.text = atmDevice.getAtmTimeWork().toString()
+            textViewCity.text = atmDevice.cityRU
+            textViewPlace.text = atmDevice.placeRu
+            textViewAddress.text = atmDevice.fullAddressRu
+            textViewWorkTime.text = atmDevice.atmTimeWork.toString()
         }
 
         return view
