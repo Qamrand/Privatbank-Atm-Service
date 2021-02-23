@@ -1,12 +1,10 @@
 package com.qamrand.privatbankatmservice.ui.fragment.main
 
-import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.DecelerateInterpolator
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -14,31 +12,38 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.qamrand.privatbankatmservice.App
 import com.qamrand.privatbankatmservice.R
 import com.qamrand.privatbankatmservice.databinding.FragmentMainBinding
+import com.qamrand.privatbankatmservice.di.components.DaggerMainFragmentComponent
+import com.qamrand.privatbankatmservice.di.modules.MainFragmentModule
 import com.qamrand.privatbankatmservice.model.AtmDevice
 import com.qamrand.privatbankatmservice.remote.api.AtmDataSource
 import com.qamrand.privatbankatmservice.ui.activity.MainActivity
-import com.qamrand.privatbankatmservice.ui.fragment.AtmFragment
+import com.qamrand.privatbankatmservice.ui.fragment.atm.AtmFragment
+import com.qamrand.privatbankatmservice.utils.autoClearedFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 
 class MainFragment : Fragment(), AtmAdapter.AtmViewListener, View.OnClickListener {
 
     @Inject
     lateinit var dataSource: AtmDataSource
 
-    private lateinit var adapter: AtmAdapter
+    //@Inject
+    lateinit var adapter: AtmAdapter
 
-    private var _binding: FragmentMainBinding? = null
-    private val binding get() = _binding!!
+    private var _binding: FragmentMainBinding by autoClearedFragment()
+    private val binding get() = _binding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        adapter = AtmAdapter(this)
-        Log.d(App.TAG_APP, "CREATE FRAGMENT")
+        App.appComponent.injectMainFragment(this)
+        adapter = DaggerMainFragmentComponent
+            .builder()
+            .mainFragmentModule(MainFragmentModule(this))
+            .build()
+            .getAtmAdapter()
+        //adapter = AtmAdapter(this)
     }
 
     override fun onCreateView(
@@ -47,9 +52,12 @@ class MainFragment : Fragment(), AtmAdapter.AtmViewListener, View.OnClickListene
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
-        val view = binding.root
-        App.appComponent.injectMainFragment(this)
+        return binding.root
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupRecyclerView()
         //AutoCompleteTextView init
         val arrayAdapter: ArrayAdapter<String> = ArrayAdapter<String>(
             context!!,
@@ -59,20 +67,15 @@ class MainFragment : Fragment(), AtmAdapter.AtmViewListener, View.OnClickListene
 
         binding.acCity.setAdapter(arrayAdapter)
 
-
-        setupRecyclerView()
-
         binding.searchButton.setOnClickListener(this)
-        return view
     }
 
-
     private fun fetchData(city: String) {
-        GlobalScope.launch(Dispatchers.Main){
+        GlobalScope.launch(Dispatchers.Main) {
             binding.progressBar.visibility = View.VISIBLE
             val atm = dataSource.getAtmByCity(city)
-            if(atm.isSuccessful) {
-               // Log.d(App.TAG_APP, "" + atm.body()?.getAtmDevices())
+            if (atm.isSuccessful) {
+                // Log.d(App.TAG_APP, "" + atm.body()?.getAtmDevices())
                 binding.progressBar.visibility = View.GONE
                 adapter.setItems(atm.body()?.atmDevices as ArrayList<AtmDevice>)
             } else {
@@ -90,8 +93,6 @@ class MainFragment : Fragment(), AtmAdapter.AtmViewListener, View.OnClickListene
     }
 
     private fun setupRecyclerView() {
-
-        Log.d(App.TAG_APP, "SETUP")
         val linearLayoutManager = LinearLayoutManager(requireContext())
         val itemDecor = DividerItemDecoration(
             binding.recyclerView.context,
@@ -107,9 +108,7 @@ class MainFragment : Fragment(), AtmAdapter.AtmViewListener, View.OnClickListene
     }
 
     override fun onClick(v: View) {
-
-        if(v.id == R.id.search_button) {
-            Log.d(App.TAG_APP, "clicked")
+        if (v.id == R.id.search_button) {
             val city: String = binding.acCity.text.toString()
             if (city != "") {
                 adapter.setItems(ArrayList())
@@ -120,14 +119,7 @@ class MainFragment : Fragment(), AtmAdapter.AtmViewListener, View.OnClickListene
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Log.d(App.TAG_APP, "DESTROY VIEW")
-
-        _binding = null
+        //_binding = null
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d(App.TAG_APP, "DESTROY FRAGMENT")
-
-    }
 }

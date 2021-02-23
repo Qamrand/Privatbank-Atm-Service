@@ -3,7 +3,9 @@ package com.qamrand.privatbankatmservice.ui.fragment.main
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.qamrand.privatbankatmservice.R
 import com.qamrand.privatbankatmservice.databinding.ItemPlaceBinding
 import com.qamrand.privatbankatmservice.model.AtmDevice
 
@@ -21,13 +23,17 @@ class AtmAdapter(private val listener: AtmViewListener) :
         this.items.clear()
         this.items.addAll(items)
         notifyDataSetChanged()
-
     }
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding: ItemPlaceBinding =
-            ItemPlaceBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            DataBindingUtil.inflate(
+                LayoutInflater.from(parent.context),
+                R.layout.item_place,
+                parent,
+                false
+            )
         return ViewHolder(binding, listener)
     }
 
@@ -49,12 +55,10 @@ class ViewHolder(
 
     fun bind(item: AtmDevice) {
         this.atmDevice = item
-        itemBinding.placeItem.text = item.placeRu
+        itemBinding.atm = item
     }
 
     override fun onClick(v: View?) {
         listener.onClickAtm(atmDevice)
-
     }
-
 }

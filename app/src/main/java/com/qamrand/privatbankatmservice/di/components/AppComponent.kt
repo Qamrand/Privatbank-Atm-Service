@@ -1,5 +1,6 @@
-package com.qamrand.privatbankatmservice.di
+package com.qamrand.privatbankatmservice.di.components
 
+import com.qamrand.privatbankatmservice.di.modules.AtmApiModule
 import com.qamrand.privatbankatmservice.ui.fragment.main.MainFragment
 import dagger.Component
 import javax.inject.Singleton

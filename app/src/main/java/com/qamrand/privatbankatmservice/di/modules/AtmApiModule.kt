@@ -1,9 +1,10 @@
-package com.qamrand.privatbankatmservice.di
+package com.qamrand.privatbankatmservice.di.modules
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.qamrand.privatbankatmservice.remote.api.AtmApi
 import com.qamrand.privatbankatmservice.remote.api.AtmDataSource
+import com.qamrand.privatbankatmservice.remote.repository.AtmRepository
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -39,5 +40,8 @@ class AtmApiModule {
     @Provides
     fun provideAtmDataSource(atmApi: AtmApi) : AtmDataSource = AtmDataSource(atmApi)
 
+    @Singleton
+    @Provides
+    fun provideAtmRepository(atmDataSource: AtmDataSource) : AtmRepository = AtmRepository(atmDataSource)
 
 }
