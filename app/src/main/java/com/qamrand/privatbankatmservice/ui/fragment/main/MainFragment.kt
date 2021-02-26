@@ -1,14 +1,16 @@
 package com.qamrand.privatbankatmservice.ui.fragment.main
 
+import android.app.Activity
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.rickandmorty.utils.autoClearedFragment
 import com.qamrand.privatbankatmservice.App
 import com.qamrand.privatbankatmservice.R
 import com.qamrand.privatbankatmservice.databinding.FragmentMainBinding
@@ -18,13 +20,14 @@ import com.qamrand.privatbankatmservice.model.AtmDevice
 import com.qamrand.privatbankatmservice.remote.api.AtmDataSource
 import com.qamrand.privatbankatmservice.ui.activity.MainActivity
 import com.qamrand.privatbankatmservice.ui.fragment.atm.AtmFragment
-import com.qamrand.privatbankatmservice.utils.autoClearedFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class MainFragment : Fragment(), AtmAdapter.AtmViewListener, View.OnClickListener {
+
+class MainFragment : Fragment(R.layout.fragment_main), AtmAdapter.AtmViewListener,
+    View.OnClickListener {
 
     @Inject
     lateinit var dataSource: AtmDataSource
@@ -32,33 +35,36 @@ class MainFragment : Fragment(), AtmAdapter.AtmViewListener, View.OnClickListene
     //@Inject
     lateinit var adapter: AtmAdapter
 
-    private var _binding: FragmentMainBinding by autoClearedFragment()
+    private val _binding: FragmentMainBinding by autoClearedFragment(FragmentMainBinding::bind)
     private val binding get() = _binding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                activity?.onBackPressed()
+            }
+        })
+
         App.appComponent.injectMainFragment(this)
         adapter = DaggerMainFragmentComponent
             .builder()
             .mainFragmentModule(MainFragmentModule(this))
             .build()
             .getAtmAdapter()
-        //adapter = AtmAdapter(this)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentMainBinding.inflate(inflater, container, false)
-        return binding.root
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
-        //AutoCompleteTextView init
+        setAutoCompleteAdapter()
+
+        binding.searchButton.setOnClickListener(this)
+    }
+
+    private fun setAutoCompleteAdapter(){
         val arrayAdapter: ArrayAdapter<String> = ArrayAdapter<String>(
             context!!,
             R.layout.support_simple_spinner_dropdown_item,
@@ -66,8 +72,6 @@ class MainFragment : Fragment(), AtmAdapter.AtmViewListener, View.OnClickListene
         )
 
         binding.acCity.setAdapter(arrayAdapter)
-
-        binding.searchButton.setOnClickListener(this)
     }
 
     private fun fetchData(city: String) {
@@ -79,6 +83,7 @@ class MainFragment : Fragment(), AtmAdapter.AtmViewListener, View.OnClickListene
                 binding.progressBar.visibility = View.GONE
                 adapter.setItems(atm.body()?.atmDevices as ArrayList<AtmDevice>)
             } else {
+                Exception(atm.errorBody().toString()).printStackTrace()
                 Log.d(App.TAG_APP, atm.errorBody().toString())
             }
         }
@@ -108,18 +113,28 @@ class MainFragment : Fragment(), AtmAdapter.AtmViewListener, View.OnClickListene
     }
 
     override fun onClick(v: View) {
-        if (v.id == R.id.search_button) {
-            val city: String = binding.acCity.text.toString()
-            if (city != "") {
-                adapter.setItems(ArrayList())
-                fetchData(city)
+        when (v.id) {
+            R.id.search_button -> {
+                val city: String = binding.acCity.text.toString()
+                if (city != "") {
+                    adapter.setItems(ArrayList())
+                    hideSoftKeyboard(activity as MainActivity)
+                    fetchData(city)
+                }
             }
+
         }
+
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        //_binding = null
+    private fun hideSoftKeyboard(activity: Activity) {
+        val inputMethodManager: InputMethodManager = activity.getSystemService(
+            Activity.INPUT_METHOD_SERVICE
+        ) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(
+            activity.currentFocus!!.windowToken, 0
+        )
     }
+
 
 }

@@ -8,7 +8,7 @@ import com.qamrand.privatbankatmservice.di.components.MainFragmentComponent
 class App : Application() {
     companion object {
         lateinit var appComponent: AppComponent
-        lateinit var mainFragmentComponent: MainFragmentComponent
+        //lateinit var mainFragmentComponent: MainFragmentComponent
         const val TAG_APP = "TAG_APP"
     }
 

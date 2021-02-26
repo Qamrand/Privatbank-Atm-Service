@@ -25,7 +25,6 @@ class AtmAdapter(private val listener: AtmViewListener) :
         notifyDataSetChanged()
     }
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding: ItemPlaceBinding =
             DataBindingUtil.inflate(
