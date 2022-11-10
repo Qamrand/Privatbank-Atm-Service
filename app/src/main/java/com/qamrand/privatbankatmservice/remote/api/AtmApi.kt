@@ -10,9 +10,9 @@ interface AtmApi {
 
     @GET("infrastructure")
     suspend fun getAtmDataByCity(
-        @QueryName format: String?,
-        @QueryName atm: String?,
-        @Query("address") address: String?,
+        @QueryName format: String? = "json",
+        @QueryName atm: String? = "atm",
+        @Query("address") address: String? = "",
         @Query("city") compact: String?
     ): Response<AtmData>
 }
