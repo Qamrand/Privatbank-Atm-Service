@@ -59,7 +59,7 @@ class MainFragment : Fragment(R.layout.fragment_main), AtmAdapter.AtmViewListene
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
-        setAutoCompleteAdapter()
+        setAutoCompleteAdapter() 
 
         binding.searchButton.setOnClickListener(this)
     }
