@@ -19,11 +19,40 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        release {
+            storeFile file('./keys/GlobalBonusKeystoreRelease')
+            storePassword 'Qt4CRdGmlWgOATX'
+            keyPassword 'Qt4CRdGmlWgOATX'
+            keyAlias = 'GlobalBonusKeystoreRelease'
+        }
+        debug {
+            storeFile file('./keys/GlobalBonusKeystoreDebug')
+            storePassword 'p9gSbbhb77mDIRv'
+            keyPassword 'p9gSbbhb77mDIRv'
+            keyAlias = 'GlobalBonusKeystoreDebug'
+        }
+    }
+
     buildTypes {
         debug {
             minifyEnabled false
+            shrinkResources false
+            debuggable true
+            applicationIdSuffix ".dev"
+            signingConfig signingConfigs.debug
+        }
+
+        release {
+            minifyEnabled false
+            shrinkResources false
+            debuggable false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
+
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
